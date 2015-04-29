@@ -173,6 +173,13 @@ class SassBeautifyCommand(sublime_plugin.TextCommand):
         content = re.sub(re.compile('(;.*|}.*)(\n +//.*\n.+[{,])$', re.MULTILINE), insert_newline_between_capturing_parentheses, content)
 
         return content
+    
+    def beautify_newlines_at_end_of_file(self, content):
+        def insert_new_line_at_end_of_file(m):
+            return m.group(1) + '\n'
+            
+        re.sub(re.compile('([^\x0a\x0d])\Z'), insert_new_line_at_end_of_file, content)
+        return content
 
     def check_thread(self, thread, i=0, dir=1):
         '''
@@ -225,6 +232,9 @@ class SassBeautifyCommand(sublime_plugin.TextCommand):
 
         if self.settings.get('newlineBetweenSelectors', False):
             output = self.beautify_newlines(output)
+            
+        if self.settings.get('newLineAtEndOfFile', False):
+            output = self.beautify_newlines_at_end_of_file(output)
 
         self.viewport_pos = self.view.viewport_position()
         self.selection = self.view.sel()[0]
