@@ -211,3 +211,31 @@ class test_internal_function_beautify_newlines(TestCase):
             }
 
             """))
+            
+class test_internal_function_beautify_newlines_at_end_of_file(TestCase):
+    # Check that a newline is inserted between two selectors
+    def test_insert_newline_if_none_present(self):
+        beautified = SassBeautifyCommandInstance.beautify_newlines_at_end_of_file(textwrap.dedent("""\
+            .ClassA {
+                color: red;
+            }"""))
+
+        self.assertEqual(beautified, textwrap.dedent("""\
+            .ClassA {
+                color: red;
+            }
+            """))
+
+    # Check that a property followed by a selector is separated with a newline
+    def test_do_not_insert_newline_if_already_present(self):
+        beautified = SassBeautifyCommandInstance.beautify_newlines_at_end_of_file(textwrap.dedent("""\
+            .ClassA {
+                color: red;
+            }
+            """))
+
+        self.assertEqual(beautified, textwrap.dedent("""\
+            .ClassA {
+                color: red;
+            }
+            """))
